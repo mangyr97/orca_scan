@@ -29,6 +29,6 @@ export class WalletsController {
     type: WalletsEntity,
   })
   async findById(@Param('id') id: string): Promise<WalletsEntity> {
-    return await this.WalletsService.findById(+id);
+    return await this.WalletsService.findById(id);
   }
 }

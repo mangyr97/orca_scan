@@ -1,21 +1,30 @@
 FROM node:16.20.0-alpine3.17
 
-RUN apk update && apk add --no-cache libtool autoconf automake linux-headers gcc g++ cmake python3 git make
+RUN apk add --no-cache make python3 git
 
 WORKDIR /app
-COPY package.json package.json
-COPY package-lock.json package-lock.json
-COPY tsconfig.json tsconfig.json
-COPY package.json package.json
 
-RUN node -v
-RUN npm ci
-
+# Sources
 COPY src /app/src
 
+# Install
+COPY package.json /app/package.json
+COPY package-lock.json /app/package-lock.json
+
+# Config
+COPY tsconfig.json /app/tsconfig.json
+COPY tsconfig.build.json /app/tsconfig.build.json
+
+# Build
+RUN npm ci --only=production --ignore-scripts
 RUN npm run build
 
-RUN rm -rf /app/src
+# Clean
+RUN rm -rf /app/package-lock.json
+#RUN rm -rf /app/tsconfig.json
+#RUN rm -rf /app/tsconfig.build.json
+#RUN rm -rf /app/src
 ENV NODE_OPTIONS="--max-old-space-size=4096"
+EXPOSE 3000
 
-CMD node dist/index.js
+CMD npm run start:prod

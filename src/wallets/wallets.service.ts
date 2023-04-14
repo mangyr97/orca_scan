@@ -22,7 +22,7 @@ export class WalletsService {
     return this.walletsRepository.find();
   }
 
-  async findById(id: number): Promise<WalletsEntity> {
+  async findById(id: string): Promise<WalletsEntity> {
     return await this.walletsRepository.findOneBy({id});
   }
 
