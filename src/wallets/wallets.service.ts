@@ -13,7 +13,10 @@ export class WalletsService {
   ) {}
   
   async create(createWallet: CreateWalletDto): Promise<WalletsEntity> {
-    return this.walletsRepository.create()
+    const wallet = new WalletsEntity()
+    wallet.address=createWallet.address
+    wallet.telegram_user_id=createWallet.telegram_user_id
+    return await wallet.save()
   }
   findAll(): Promise<WalletsEntity[]> {
     return this.walletsRepository.find();

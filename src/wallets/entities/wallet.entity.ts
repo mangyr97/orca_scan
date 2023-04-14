@@ -27,7 +27,7 @@ export class WalletsEntity extends BaseEntity {
    * @example 1
    */
   @Column({ name: 'telegram_user_id', type: 'varchar', length: 100 })
-  telegram_user_id: number;
+  telegram_user_id: string;
 
   @CreateDateColumn({ name: 'created_at' })
   created_at?: Date;

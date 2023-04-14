@@ -16,7 +16,7 @@ describe('AppController', () => {
 
   describe('create', () => {
     it('should return wallet', () => {
-      expect(appController.create({"address": "0x3428C6B411C6e3147DAD28cdAc63CB736444eA97", "telegramUserId": 1})).toBe({"address": "0x3428C6B411C6e3147DAD28cdAc63CB736444eA97", "telegramUserId": 1});
+      expect(appController.create({"address": "0x3428C6B411C6e3147DAD28cdAc63CB736444eA97", "telegram_user_id": '1'})).toBe({"address": "0x3428C6B411C6e3147DAD28cdAc63CB736444eA97", "telegram_user_id": '1'});
     });
   });
 });
