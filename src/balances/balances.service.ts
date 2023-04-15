@@ -14,6 +14,6 @@ export class BalancesService {
   
   async getBalances(address: string): Promise<string> {
     const balance = await this.ethereumProvider.getBalanceByAddress(address)
-    return balance.toString()
+    return this.ethereumProvider.fromNativeNumber(balance).toString()
   }
 }

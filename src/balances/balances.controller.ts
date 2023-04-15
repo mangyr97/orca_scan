@@ -5,7 +5,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { BalancesService } from './balances.service';
-import { GetBalanceDto } from './dto/get-balance.dto';
+import { GetBalanceRequestDto, GetBalanceResponsetDto } from './dto/get-balance.dto';
 
 @ApiTags('balances')
 @Controller('balances')
@@ -17,10 +17,13 @@ export class BalancesController {
   @ApiResponse({
     status: 200,
     description: 'Founded balance',
-    type: '100',
+    type: GetBalanceResponsetDto,
   })
-  async create(@Body() GetBalanceDto: GetBalanceDto): Promise<string> {
-    const balance =  this.BalancesService.getBalances(GetBalanceDto.address);
-    return balance
+  async create(@Body() GetBalanceDto: GetBalanceRequestDto): Promise<GetBalanceResponsetDto> {
+    const balance =  await this.BalancesService.getBalances(GetBalanceDto.address);
+    const response: GetBalanceResponsetDto = {
+      balance: balance
+    }
+    return response
   }
 }
