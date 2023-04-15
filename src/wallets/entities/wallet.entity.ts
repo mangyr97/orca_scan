@@ -29,7 +29,7 @@ export class WalletsEntity extends BaseEntity {
    * @example 1
    */
   @Column({ name: 'telegram_user_id', type: 'varchar', length: 100 })
-  @ApiProperty({ example: '2', description: 'The user id in telegram' })
+  @ApiProperty({ example: '1', description: 'The user id in telegram' })
   telegram_user_id: string;
 
   @CreateDateColumn({ name: 'created_at' })

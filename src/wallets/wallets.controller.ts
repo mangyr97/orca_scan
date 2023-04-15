@@ -16,7 +16,11 @@ export class WalletsController {
   
   @Post()
   @ApiOperation({ summary: 'Create wallet' })
-  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Founded record',
+    type: WalletsEntity,
+  })
   async create(@Body() CreateWalletDto: CreateWalletDto): Promise<WalletsEntity> {
     const wallet =  this.WalletsService.create(CreateWalletDto);
     return wallet
