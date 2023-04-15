@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { WalletsModule } from './wallets/wallets.module';
+import { BalancesModule } from "./balances/balances.module";
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WalletsEntity } from "./wallets/entities/wallet.entity";
 @Module({
   imports: [
     ConfigModule.forRoot(),
     WalletsModule,
+    BalancesModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -18,8 +20,6 @@ import { WalletsEntity } from "./wallets/entities/wallet.entity";
       synchronize: true,
       logging: ["error"],
     }),
-    // TypeOrmModule.forFeature([WalletsEntity]),
-
   ],
 })
 export class AppModule {}
