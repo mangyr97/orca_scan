@@ -9,7 +9,7 @@ export class GetBalanceRequestDto {
 }
 
 export class GetBalanceResponsetDto {
-  @ApiProperty({ example: '163812188391329885', description: 'The address balance' })
+  @ApiProperty({ example: '0.163812188391329885', description: 'The address balance' })
   @IsString()
   readonly balance: string;
 }
