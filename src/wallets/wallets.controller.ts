@@ -31,4 +31,13 @@ export class WalletsController {
   async findById(@Param('id') id: string): Promise<WalletsEntity> {
     return await this.WalletsService.findById(id);
   }
+  @Get('/all')
+  @ApiResponse({
+    status: 200,
+    description: 'The found records',
+    type: WalletsEntity,
+  })
+  async findAll(): Promise<WalletsEntity[]> {
+    return await this.WalletsService.findAll();
+  }
 }

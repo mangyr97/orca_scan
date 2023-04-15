@@ -18,8 +18,8 @@ export class WalletsService {
     wallet.telegram_user_id=createWallet.telegram_user_id
     return await wallet.save()
   }
-  findAll(): Promise<WalletsEntity[]> {
-    return this.walletsRepository.find();
+  async findAll(): Promise<WalletsEntity[]> {
+    return await this.walletsRepository.find();
   }
 
   async findById(id: string): Promise<WalletsEntity> {
