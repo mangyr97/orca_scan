@@ -9,11 +9,11 @@ import { WalletsService } from './wallets.service';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { WalletsEntity } from './entities/wallet.entity';
 
-@ApiBearerAuth()
 @ApiTags('wallets')
 @Controller('wallets')
 export class WalletsController {
   constructor(private readonly WalletsService: WalletsService) {}
+  
   @Post()
   @ApiOperation({ summary: 'Create wallet' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -23,19 +23,22 @@ export class WalletsController {
   }
 
   @Get('/wallet/:id')
+  @ApiOperation({ summary: 'Get wallet by uuid' })
   @ApiResponse({
     status: 200,
-    description: 'The found record',
+    description: 'Founded record',
     type: WalletsEntity,
   })
   async findById(@Param('id') id: string): Promise<WalletsEntity> {
     return await this.WalletsService.findById(id);
   }
+
   @Get('/all')
+  @ApiOperation({ summary: 'Get all wallets' })
   @ApiResponse({
     status: 200,
-    description: 'The found records',
-    type: WalletsEntity,
+    description: 'Founded records',
+    type: [WalletsEntity],
   })
   async findAll(): Promise<WalletsEntity[]> {
     return await this.WalletsService.findAll();
