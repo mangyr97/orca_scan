@@ -29,4 +29,8 @@ export class WalletsService {
   async remove(id: string): Promise<void> {
     await this.walletsRepository.delete(id);
   }
+
+  async findByTelegramId(telegram_user_id: string): Promise<WalletsEntity[]> {
+    return await this.walletsRepository.findBy({telegram_user_id});
+  }
 }

@@ -23,7 +23,7 @@ export class WalletsController {
   }
 
   @Get('/wallet/:id')
-  @ApiOperation({ summary: 'Get wallet by uuid' })
+  @ApiOperation({ summary: 'Get wallet by id' })
   @ApiResponse({
     status: 200,
     description: 'Founded record',
@@ -31,6 +31,17 @@ export class WalletsController {
   })
   async findById(@Param('id') id: string): Promise<WalletsEntity> {
     return await this.WalletsService.findById(id);
+  }
+
+  @Get('/wallet/tg/:id')
+  @ApiOperation({ summary: 'Get wallet by telegram user id' })
+  @ApiResponse({
+    status: 200,
+    description: 'Founded records',
+    type: [WalletsEntity],
+  })
+  async findByTelegramId(@Param('id') telegram_user_id: string): Promise<WalletsEntity[]> {
+    return await this.WalletsService.findByTelegramId(telegram_user_id);
   }
 
   @Get('/all')
