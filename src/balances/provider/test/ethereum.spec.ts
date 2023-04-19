@@ -15,6 +15,10 @@ describe('Ethereum provider test', () => {
         const balance = await provider.getTokenBalanceByAddress(address, contract);
         expect(balance.gt(0)).toBe(true);
     });
+    test('getTokensBalancesByAddress()', async () => {
+        const balance = await provider.getTokensBalancesByAddress('0x47ac0Fb4F2D84898e4D9E7b4DaB3C24507a6D503', ['0xdAC17F958D2ee523a2206206994597C13D831ec7','0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48']);
+        // console.log(balance);
+    });
     test('getTokenDecimals()', async () => {
         const balance = await provider.getTokenBalanceByAddress(address, contract);
         const decimals = await provider.getTokenDecimals(contract);

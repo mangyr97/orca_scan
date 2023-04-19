@@ -1,6 +1,13 @@
 import axios, {AxiosInstance} from 'axios';
 import BigNumber from "bignumber.js";
 import keccak256 from 'keccak256';
+import {
+    Multicall,
+    ContractCallResults,
+    ContractCallContext,
+} from 'ethereum-multicall';
+import ERC20Abi from './abi/erc20-abi.json';
+import TOKENS from './tokens/tokens.json';
 
 export interface EthereumOptions {
     url: string;
@@ -9,15 +16,17 @@ export class EthereumProvider {
     protected readonly nodeUrl: string;
     protected readonly decimals: number;
     private api: AxiosInstance;
+    private multicall: Multicall;
     constructor(options:EthereumOptions) {
-        this.nodeUrl = options.url;
-        this.decimals = 18; // ethereum decimals
         this.api = axios.create({
             baseURL: this.nodeUrl,
             headers: {
                 'Content-Type': 'application/json' 
             }
         });
+        this.decimals = 18; // ethereum decimals
+        this.nodeUrl = options.url;
+        this.multicall = new Multicall({ nodeUrl: this.nodeUrl, tryAggregate: true });
     }
     async getBalanceByAddress(address: string): Promise<BigNumber> {
         const body = {
@@ -42,11 +51,24 @@ export class EthereumProvider {
         const response = await this.postRequest(body);
         return this.fromHex(response.result)
     }
-    async getTokensBalancesByAddress(address: string) {
-        
+    async getTokensBalancesByAddress(address: string, contracts: string[]) {
+        let contractCallContext: ContractCallContext[] = []
+        for (const contract of contracts) {
+            contractCallContext.push(this.buildContractCallContext('USDT', address, contract))
+        }
+        const results: ContractCallResults = await this.multicall.call(contractCallContext);
+        TOKENS.push(
+            {
+                "contract": "aslkejopanjsd",
+                "name":"asdlkmasd",
+                "ticker":"",
+                "decimals":""
+            }
+        )
+        console.log(JSON.stringify(TOKENS));
     }
     prepareCall(address: string, method: string) {
-        const preMethod = `0x${keccak256(method).toString('hex')}`.slice(0,10);
+        const preMethod = this.keccak(method).slice(0,10);
         const preAddress = address.startsWith('0x')? address.slice(2): address
         const zeros = '000000000000000000000000'
         return preMethod+zeros+preAddress
@@ -65,7 +87,7 @@ export class EthereumProvider {
     }
     async getTokenDecimals(contract: string): Promise<number> {
         const method = 'decimals()'
-        const call = `0x${keccak256(method).toString('hex')}`
+        const call = this.keccak(method)
         const body = {
             jsonrpc: "2.0",
             method: "eth_call",
@@ -89,5 +111,42 @@ export class EthereumProvider {
     private getRequestId() {
         return new Date().getTime()
     }
+    private keccak (text: string) {
+        return `0x${keccak256(text).toString('hex')}`
+    }
+
+    private buildContractCallContext(
+        reference: string,
+        ethereumAddress: string,
+        contractAddress: string
+      ): ContractCallContext {
+        return {
+          reference,
+          contractAddress,
+          abi: ERC20Abi,
+          calls: [
+            {
+              reference: 'balance',
+              methodName: 'balanceOf',
+              methodParameters: [ethereumAddress],
+            },
+            {
+              reference: 'symbol',
+              methodName: 'symbol',
+              methodParameters: [],
+            },
+            {
+              reference: 'decimals',
+              methodName: 'decimals',
+              methodParameters: [],
+            },
+            {
+              reference: 'name',
+              methodName: 'name',
+              methodParameters: [],
+            },
+          ],
+        };
+      }
 }
 
