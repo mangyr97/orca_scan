@@ -11,10 +11,13 @@ export class BalancesService {
   constructor() {
     this.ethereumProvider = new EthereumProvider(options)
   }
-  
+  async onModuleInit(){
+    console.log('init balances');
+    
+    await this.ethereumProvider.init()
+  }
   async getBalances(address: string): Promise<string> {
     const balance = await this.ethereumProvider.getBalanceByAddress(address)
-    console.log(process.env);
     return this.ethereumProvider.fromNativeNumber(balance).toString()
   }
 }
