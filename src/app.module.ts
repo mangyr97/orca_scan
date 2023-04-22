@@ -6,7 +6,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { WalletsEntity } from "./wallets/entities/wallet.entity";
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     WalletsModule,
     BalancesModule,
     TypeOrmModule.forRoot({

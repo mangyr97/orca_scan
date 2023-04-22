@@ -7,14 +7,11 @@ import {
     ContractCallContext,
 } from 'ethereum-multicall';
 import ERC20Abi from './abi/erc20-abi.json';
-import TOKENS from './tokens/tokens.json';
-import { Injectable } from '@nestjs/common';
 
 export interface EthereumOptions {
     blockchainName: string;
     url: string;
 }
-@Injectable()
 export class EthereumProvider {
     protected readonly nodeUrl: string;
     protected readonly decimals: number;
@@ -31,9 +28,9 @@ export class EthereumProvider {
         this.nodeUrl = options.url;
         this.multicall = new Multicall({ nodeUrl: this.nodeUrl, tryAggregate: true });
     }
-    async onModuleInit() {
-        console.log(this.nodeUrl, 'EthereumProvider');
-        
+    async init() {
+        const tokens = await this.getTokensBalancesByAddress('0x47ac0Fb4F2D84898e4D9E7b4DaB3C24507a6D503', ['0xdAC17F958D2ee523a2206206994597C13D831ec7','0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'])
+        console.log(tokens);
     }
     async getBalanceByAddress(address: string): Promise<BigNumber> {
         const body = {
@@ -63,16 +60,10 @@ export class EthereumProvider {
         for (const contract of contracts) {
             contractCallContext.push(this.buildContractCallContext('USDT', address, contract))
         }
+        console.log();
+        
         const results: ContractCallResults = await this.multicall.call(contractCallContext);
-        TOKENS.push(
-            {
-                "contract": "aslkejopanjsd",
-                "name":"asdlkmasd",
-                "ticker":"",
-                "decimals":""
-            }
-        )
-        console.log(JSON.stringify(TOKENS));
+        console.log(JSON.stringify(results));
     }
     prepareCall(address: string, method: string) {
         const preMethod = this.keccak(method).slice(0,10);
