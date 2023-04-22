@@ -12,10 +12,25 @@ import { IChainlist } from './config/interface';
 export interface EvmOptions{
     metadata: IChainlist
 }
+
+export interface IToken {
+    symbol:   string;
+    name:     string;
+    decimals: number;
+    address:  string;
+    logoURI:  string;
+    tags:     string[];
+}
+
+export interface ITokens {
+    tokens: { [key: string]: IToken };
+}
+
 export class EvmProvider {
     protected readonly nodeUrl: string;
     protected readonly decimals: number;
     readonly metadata: IChainlist;
+    private tokens: ITokens;
     private api: AxiosInstance;
     private multicall: Multicall;
     constructor(options:EvmOptions) {
@@ -31,8 +46,9 @@ export class EvmProvider {
         this.multicall = new Multicall({ nodeUrl: this.nodeUrl, tryAggregate: true });
     }
     async init() {
-        const tokens = await this.getTokensBalancesByAddress('0x47ac0Fb4F2D84898e4D9E7b4DaB3C24507a6D503', ['0xdAC17F958D2ee523a2206206994597C13D831ec7','0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'])
-        console.log(tokens);
+        const res = await axios.get<ITokens>(`https://api.1inch.io/v4.0/${this.metadata.chainId}/tokens`);
+        this.tokens = res.data
+        console.log(this.tokens.tokens);
     }
     async getBalanceByAddress(address: string): Promise<BigNumber> {
         const body = {
@@ -57,15 +73,15 @@ export class EvmProvider {
         const response = await this.postRequest(body);
         return this.fromHex(response.result)
     }
-    async getTokensBalancesByAddress(address: string, contracts: string[]) {
-        let contractCallContext: ContractCallContext[] = []
-        for (const contract of contracts) {
-            contractCallContext.push(this.buildContractCallContext('USDT', address, contract))
-        }
-        console.log();
+    async getTokensBalancesByAddress(address: string) {
+        // let contractCallContext: ContractCallContext[] = []
+        // for (const contract of this.tokens) {
+        //     contractCallContext.push(this.buildContractCallContext('USDT', address, contract))
+        // }
+        // console.log();
         
-        const results: ContractCallResults = await this.multicall.call(contractCallContext);
-        console.log(JSON.stringify(results));
+        // const results: ContractCallResults = await this.multicall.call(contractCallContext);
+        // console.log(JSON.stringify(results));
     }
     prepareCall(address: string, method: string) {
         const preMethod = this.keccak(method).slice(0,10);
