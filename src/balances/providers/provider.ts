@@ -7,17 +7,20 @@ import {
     ContractCallContext,
 } from 'ethereum-multicall';
 import ERC20Abi from './abi/erc20-abi.json';
+import { IChainlist } from './config/interface';
 
-export interface EthereumOptions {
-    blockchainName: string;
-    url: string;
+export interface EvmOptions{
+    metadata: IChainlist
 }
-export class EthereumProvider {
+export class EvmProvider {
     protected readonly nodeUrl: string;
     protected readonly decimals: number;
+    readonly metadata: IChainlist;
     private api: AxiosInstance;
     private multicall: Multicall;
-    constructor(options:EthereumOptions) {
+    constructor(options:EvmOptions) {
+        this.nodeUrl = options.metadata.rpcs[0];
+        this.metadata = options.metadata
         this.api = axios.create({
             baseURL: this.nodeUrl,
             headers: {
@@ -25,7 +28,6 @@ export class EthereumProvider {
             }
         });
         this.decimals = 18; // ethereum decimals
-        this.nodeUrl = options.url;
         this.multicall = new Multicall({ nodeUrl: this.nodeUrl, tryAggregate: true });
     }
     async init() {

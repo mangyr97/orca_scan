@@ -19,11 +19,11 @@ export class BalancesController {
     description: 'Founded balance',
     type: GetBalanceResponsetDto,
   })
-  async create(@Body() GetBalanceDto: GetBalanceRequestDto): Promise<GetBalanceResponsetDto> {
-    const balance =  await this.BalancesService.getBalances(GetBalanceDto.address);
-    const response: GetBalanceResponsetDto = {
-      balance: balance
-    }
-    return response
+  async create(@Body() GetBalanceDto: GetBalanceRequestDto): Promise<any> {
+    const balances =  await this.BalancesService.getBalances(GetBalanceDto.address);
+    // const response: GetBalanceResponsetDto = {
+    //   balance: balances
+    // }
+    return balances
   }
 }

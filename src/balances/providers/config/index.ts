@@ -10,5 +10,12 @@ export const chainList: IChainlist[] = [
         chainId: 1,
         currency: "ETH",
         rpcs: configService.get<string>('ETH_RPC').split(','),
+    },
+    {
+        name: "Binance Smart Chain Mainnet",
+        tag: "BSC",
+        chainId: 56,
+        currency: "BNB",
+        rpcs: configService.get<string>('BSC_RPC').split(','),
     }
 ];
