@@ -35,3 +35,6 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Multicall
+
+Depends on [Multicall](https://github.com/mds1/multicall)
