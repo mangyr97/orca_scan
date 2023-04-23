@@ -84,6 +84,7 @@ export class EvmProvider {
         try {
             response = await this.multicall.call(contractCallContext);
         } catch (error) {
+            this.logger.warn(`[getTokensBalancesByAddress]: something wrong with multicall for ${this.metadata.name} netowrk`, error);
             return balances
         }
         
