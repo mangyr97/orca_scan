@@ -90,7 +90,7 @@ export class EvmProvider {
                 const balance = returnValue.hex
                 if (balance!=='0x00') {
                     balances[this.metadata.tag].tokens.push({
-                        balance:  balance,
+                        balance:  this.fromNativeNumber(this.fromHex(balance),this.tokens.tokens[contract].decimals),
                         symbol:   this.tokens.tokens[contract].symbol,
                         name:     this.tokens.tokens[contract].name,
                         decimals: this.tokens.tokens[contract].decimals,
