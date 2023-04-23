@@ -32,7 +32,7 @@ export class EvmProvider {
         this.multicall = new Multicall({ nodeUrl: this.nodeUrl, tryAggregate: true });
     }
     async init() {
-        const res = await axios.get<ITokens>(`https://api.1inch.io/v4.0/${this.metadata.chainId}/tokens`);
+        const res = await axios.get<ITokens>(`https://api.1inch.io/v5.0/${this.metadata.chainId}/tokens`);
         this.tokens = res.data
     }
     async getBalanceByAddress(address: string): Promise<BigNumber> {
