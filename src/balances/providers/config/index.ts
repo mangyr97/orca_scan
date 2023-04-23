@@ -17,5 +17,19 @@ export const chainList: IChainlist[] = [
         chainId: 56,
         currency: "BNB",
         rpcs: configService.get<string>('BSC_RPC').split(','),
-    }
+    },
+    {
+        name: "zkSync Era Mainnet",
+        tag: "ERA",
+        chainId: 324,
+        currency: "ETH",
+        rpcs: configService.get<string>('ARB_RPC').split(','),
+    },
+    {
+        name: "Arbitrum One",
+        tag: "ARB",
+        chainId: 42161,
+        currency: "ETH",
+        rpcs: configService.get<string>('ERA_RPC').split(','),
+    },
 ];
