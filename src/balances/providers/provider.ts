@@ -7,24 +7,10 @@ import {
     ContractCallContext,
 } from 'ethereum-multicall';
 import ERC20Abi from './abi/erc20-abi.json';
+import ERC20AbiBalanceOf from './abi/erc20-abi-balanceOf.json';
 import { IChainlist } from './config/interface';
+import { EvmOptions, IFullBalances, ITokens } from './interface';
 
-export interface EvmOptions{
-    metadata: IChainlist
-}
-
-export interface IToken {
-    symbol:   string;
-    name:     string;
-    decimals: number;
-    address:  string;
-    logoURI:  string;
-    tags:     string[];
-}
-
-export interface ITokens {
-    tokens: { [key: string]: IToken };
-}
 
 export class EvmProvider {
     protected readonly nodeUrl: string;
@@ -48,7 +34,6 @@ export class EvmProvider {
     async init() {
         const res = await axios.get<ITokens>(`https://api.1inch.io/v4.0/${this.metadata.chainId}/tokens`);
         this.tokens = res.data
-        console.log(this.tokens.tokens);
     }
     async getBalanceByAddress(address: string): Promise<BigNumber> {
         const body = {
@@ -73,15 +58,41 @@ export class EvmProvider {
         const response = await this.postRequest(body);
         return this.fromHex(response.result)
     }
-    async getTokensBalancesByAddress(address: string) {
-        // let contractCallContext: ContractCallContext[] = []
-        // for (const contract of this.tokens) {
-        //     contractCallContext.push(this.buildContractCallContext('USDT', address, contract))
-        // }
-        // console.log();
-        
-        // const results: ContractCallResults = await this.multicall.call(contractCallContext);
-        // console.log(JSON.stringify(results));
+    async getTokensBalancesByAddress(address: string): Promise<IFullBalances> {
+        const contracts = Object.keys(this.tokens.tokens);
+        const nativeBalance = await this.getBalanceByAddress(address)
+        let contractCallContext: ContractCallContext[] = []
+        console.log(contracts.length, this.metadata.tag);
+        for (const contract of contracts) {
+            contractCallContext.push(this.buildContractBalanceCallContext(contract, address, contract))
+        }
+        const balances = {};
+        const response: ContractCallResults = await this.multicall.call(contractCallContext);
+        balances[this.metadata.tag] = {};
+        balances[this.metadata.tag].metadata = {
+            name: this.metadata.name,
+            tag: this.metadata.tag,
+            chainId: this.metadata.chainId,
+            currency: this.metadata.currency,
+            balance: this.fromNativeNumber(nativeBalance).toString()
+        };
+        balances[this.metadata.tag].tokens = [];
+        for (const contract of contracts) {
+            const returnValue = response.results[contract].callsReturnContext[0].returnValues[0]
+            if (returnValue) {
+                const balance = returnValue.hex
+                if (balance!=='0x00') {
+                    balances[this.metadata.tag].tokens.push({
+                        balance:  balance,
+                        symbol:   this.tokens.tokens[contract].symbol,
+                        name:     this.tokens.tokens[contract].name,
+                        decimals: this.tokens.tokens[contract].decimals,
+                        address:  this.tokens.tokens[contract].address,
+                    })
+                }
+            }
+        }
+        return balances
     }
     prepareCall(address: string, method: string) {
         const preMethod = this.keccak(method).slice(0,10);
@@ -130,7 +141,25 @@ export class EvmProvider {
     private keccak (text: string) {
         return `0x${keccak256(text).toString('hex')}`
     }
-
+    private buildContractBalanceCallContext(
+        reference: string,
+        ethereumAddress: string,
+        contractAddress: string
+    ): ContractCallContext {
+        return {
+            reference,
+            contractAddress,
+            abi: ERC20AbiBalanceOf,
+            calls: [
+                {
+                    reference: 'balance',
+                    methodName: 'balanceOf',
+                    methodParameters: [ethereumAddress],
+                }
+            ],
+        };
+    }
+      
     private buildContractCallContext(
         reference: string,
         ethereumAddress: string,

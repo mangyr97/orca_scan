@@ -9,7 +9,8 @@ export async function getProviders(): Promise<EvmProvider[]> {
 export async function getAllBalances(providers: EvmProvider[], address: string) {
     const balances = {}
     for (const provider of providers) {
-        balances[provider.metadata.tag] = (await provider.getBalanceByAddress(address)).toString()
+        const tokens = await provider.getTokensBalancesByAddress(address)
+        balances[provider.metadata.tag] = tokens[provider.metadata.tag]
     }
     return balances
 }
