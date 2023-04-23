@@ -10,15 +10,17 @@ import ERC20Abi from './abi/erc20-abi.json';
 import ERC20AbiBalanceOf from './abi/erc20-abi-balanceOf.json';
 import { IChainlist } from './config/interface';
 import { EvmOptions, IFullBalances, ITokens } from './interface';
+import { Logger } from '@nestjs/common';
 
 
 export class EvmProvider {
     protected readonly nodeUrl: string;
     protected readonly decimals: number;
     readonly metadata: IChainlist;
-    private tokens: ITokens;
     private api: AxiosInstance;
+    private tokens: ITokens;
     private multicall: Multicall;
+    private readonly logger: Logger;
     constructor(options:EvmOptions) {
         this.nodeUrl = options.metadata.rpcs[0];
         this.metadata = options.metadata
@@ -30,11 +32,12 @@ export class EvmProvider {
         });
         this.decimals = 18; // ethereum decimals
         this.multicall = new Multicall({ nodeUrl: this.nodeUrl, tryAggregate: true });
+        this.logger = new Logger(`${this.metadata.tag} Provider`);
     }
     async init() {
         const res = await axios.get<ITokens>(`https://api.1inch.io/v5.0/${this.metadata.chainId}/tokens`);
         this.tokens = res.data
-        console.log(`Inited ${this.metadata.name}`);
+        this.logger.log(`Inited ${this.metadata.name} Provider`);
     }
     async getBalanceByAddress(address: string): Promise<BigNumber> {
         const body = {
@@ -63,7 +66,7 @@ export class EvmProvider {
         const contracts = Object.keys(this.tokens.tokens);
         const nativeBalance = await this.getBalanceByAddress(address)
         let contractCallContext: ContractCallContext[] = []
-        console.log(contracts.length, this.metadata.tag);
+        this.logger.log(`[getTokensBalancesByAddress]: checking balance of ${contracts.length} tokens for address: ${address}`);
         for (const contract of contracts) {
             contractCallContext.push(this.buildContractBalanceCallContext(contract, address, contract))
         }
@@ -99,6 +102,7 @@ export class EvmProvider {
                 }
             }
         }
+        this.logger.log(`[getTokensBalancesByAddress]: founded ${balances[this.metadata.tag].tokens.length} token nonzero balances for address: ${address}`);
         return balances
     }
     prepareCall(address: string, method: string) {
@@ -139,7 +143,7 @@ export class EvmProvider {
             )
             return response.data
         } catch (error) {
-            console.error(JSON.stringify(error));
+            this.logger.error(error);
         }
     }
     private getRequestId() {

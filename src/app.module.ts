@@ -1,9 +1,11 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { WalletsModule } from './wallets/wallets.module';
 import { BalancesModule } from "./balances/balances.module";
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { WalletsEntity } from "./wallets/entities/wallet.entity";
+import { LoggerMiddleware } from './utils/logger.middleware';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -24,4 +26,8 @@ import { WalletsEntity } from "./wallets/entities/wallet.entity";
     }),
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}
