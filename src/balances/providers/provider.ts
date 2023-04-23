@@ -34,6 +34,7 @@ export class EvmProvider {
     async init() {
         const res = await axios.get<ITokens>(`https://api.1inch.io/v5.0/${this.metadata.chainId}/tokens`);
         this.tokens = res.data
+        console.log(`Inited ${this.metadata.name}`);
     }
     async getBalanceByAddress(address: string): Promise<BigNumber> {
         const body = {
@@ -67,7 +68,6 @@ export class EvmProvider {
             contractCallContext.push(this.buildContractBalanceCallContext(contract, address, contract))
         }
         const balances = {};
-        const response: ContractCallResults = await this.multicall.call(contractCallContext);
         balances[this.metadata.tag] = {};
         balances[this.metadata.tag].metadata = {
             name: this.metadata.name,
@@ -77,6 +77,13 @@ export class EvmProvider {
             balance: this.fromNativeNumber(nativeBalance).toString()
         };
         balances[this.metadata.tag].tokens = [];
+        let response: ContractCallResults
+        try {
+            response = await this.multicall.call(contractCallContext);
+        } catch (error) {
+            return balances
+        }
+        
         for (const contract of contracts) {
             const returnValue = response.results[contract].callsReturnContext[0].returnValues[0]
             if (returnValue) {

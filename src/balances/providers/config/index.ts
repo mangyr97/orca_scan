@@ -23,13 +23,13 @@ export const chainList: IChainlist[] = [
         tag: "ERA",
         chainId: 324,
         currency: "ETH",
-        rpcs: configService.get<string>('ARB_RPC').split(','),
+        rpcs: configService.get<string>('ERA_RPC').split(','),
     },
     {
         name: "Arbitrum One",
         tag: "ARB",
         chainId: 42161,
         currency: "ETH",
-        rpcs: configService.get<string>('ERA_RPC').split(','),
+        rpcs: configService.get<string>('ARB_RPC').split(','),
     },
 ];
