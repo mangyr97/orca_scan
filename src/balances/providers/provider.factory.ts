@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { EvmProvider } from './provider';
 import { chainList } from './config';
 
-import axios from 'axios';
-
 @Injectable()
 export class EvmProviderFactory {
   constructor() {}
