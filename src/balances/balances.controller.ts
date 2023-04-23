@@ -15,15 +15,12 @@ export class BalancesController {
   @Post()
   @ApiOperation({ summary: 'Get address balance' })
   @ApiResponse({
-    status: 200,
+    status: 201,
     description: 'Founded balance',
     type: GetBalanceResponsetDto,
   })
-  async create(@Body() GetBalanceDto: GetBalanceRequestDto): Promise<any> {
+  async create(@Body() GetBalanceDto: GetBalanceRequestDto): Promise<GetBalanceResponsetDto> {
     const balances =  await this.BalancesService.getBalances(GetBalanceDto.address);
-    // const response: GetBalanceResponsetDto = {
-    //   balance: balances
-    // }
-    return balances
+    return {balances}
   }
 }
