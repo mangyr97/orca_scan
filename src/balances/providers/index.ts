@@ -14,7 +14,7 @@ export async function getAllBalancesParallel(providers: EvmProvider[], address: 
     const addressMap = [address,address,address,address,address,address]
     const balances = {}
     const results = await Promise.all(
-        [...addressMap.map(queue.wrap(async (address,index)=> providers[index].getTokensBalancesByAddress(address)))]
+        [...addressMap.map(queue.wrap((address,index)=> providers[index].getTokensBalancesByAddress(address)))]
     )
     for (const result of results) {
         const tag = Object.keys(result)[0]
