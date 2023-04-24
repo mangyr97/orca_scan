@@ -1,11 +1,26 @@
 import { IFullBalances } from "./interface";
 import { EvmProvider } from "./provider";
 import { EvmProviderFactory } from "./provider.factory";
+import * as PromiseB from 'bluebird';
+import {TaskQueue} from 'cwait';
 
 export async function getProviders(): Promise<EvmProvider[]> {
     const factory = new EvmProviderFactory()
     const providers = await factory.create()
     return providers
+}
+export async function getAllBalancesParallel(providers: EvmProvider[], address: string): Promise<IFullBalances> {
+    const queue = new TaskQueue(PromiseB, 6);
+    const addressMap = [address,address,address,address,address,address]
+    const balances = {}
+    const results = await Promise.all(
+        [...addressMap.map(queue.wrap(async (address,index)=> providers[index].getTokensBalancesByAddress(address)))]
+    )
+    for (const result of results) {
+        const tag = Object.keys(result)[0]
+        balances[tag]=result[tag]
+    }
+    return balances
 }
 export async function getAllBalances(providers: EvmProvider[], address: string): Promise<IFullBalances> {
     const balances = {}
