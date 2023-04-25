@@ -31,8 +31,10 @@ export class EvmProvider {
             }
         });
         this.decimals = 18; // ethereum decimals
-        this.multicall = new Multicall({ nodeUrl: this.nodeUrl, tryAggregate: true });
         this.logger = new Logger(`${this.metadata.tag} Provider`);
+        this.multicall = this.metadata.multicallContractAddress?
+            new Multicall({ nodeUrl: this.nodeUrl, tryAggregate: true, multicallCustomContractAddress: this.metadata.multicallContractAddress}):
+            new Multicall({ nodeUrl: this.nodeUrl, tryAggregate: true,})
     }
     async init() {
         const res = await axios.get<ITokens>(`https://api.1inch.io/v5.0/${this.metadata.chainId}/tokens`);

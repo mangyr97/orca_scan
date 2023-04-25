@@ -7,4 +7,5 @@ export interface IChainlist {
     chainId: number;
     currency: ICurrency;
     rpcs: string[];
+    multicallContractAddress?: string;
 };

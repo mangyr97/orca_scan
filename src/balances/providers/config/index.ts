@@ -38,6 +38,7 @@ export const chainList: IChainlist[] = [
         chainId: 324,
         currency: "ETH",
         rpcs: configService.get<string>('ERA_RPC').split(','),
+        multicallContractAddress: configService.get<string>('ERA_MULTICALL')
     },
     {
         name: "Arbitrum One",
