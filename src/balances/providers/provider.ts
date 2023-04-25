@@ -72,16 +72,17 @@ export class EvmProvider {
         for (const contract of contracts) {
             contractCallContext.push(this.buildContractBalanceCallContext(contract, address, contract))
         }
-        const balances = {};
-        balances[this.metadata.tag] = {};
-        balances[this.metadata.tag].metadata = {
-            name: this.metadata.name,
-            tag: this.metadata.tag,
-            chainId: this.metadata.chainId,
-            currency: this.metadata.currency,
-            balance: this.fromNativeNumber(nativeBalance).toString()
+        const balances: IFullBalances = {};
+        balances[this.metadata.tag] = {
+            metadata: {
+                name: this.metadata.name,
+                tag: this.metadata.tag,
+                chainId: this.metadata.chainId,
+                currency: this.metadata.currency,
+                balance: this.fromNativeNumber(nativeBalance).toString()
+            },
+            tokens: []
         };
-        balances[this.metadata.tag].tokens = [];
         let response: ContractCallResults
         try {
             response = await this.multicall.call(contractCallContext);
@@ -96,7 +97,7 @@ export class EvmProvider {
                 const balance = returnValue.hex
                 if (balance!=='0x00') {
                     balances[this.metadata.tag].tokens.push({
-                        balance:  this.fromNativeNumber(this.fromHex(balance),this.tokens.tokens[contract].decimals),
+                        balance:  this.fromNativeNumber(this.fromHex(balance),this.tokens.tokens[contract].decimals).toString(),
                         symbol:   this.tokens.tokens[contract].symbol,
                         name:     this.tokens.tokens[contract].name,
                         decimals: this.tokens.tokens[contract].decimals,
