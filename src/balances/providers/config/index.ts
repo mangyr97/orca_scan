@@ -47,4 +47,11 @@ export const chainList: IChainlist[] = [
         currency: "ETH",
         rpcs: configService.get<string>('ARB_RPC').split(','),
     },
+    {
+        name: "Avalanche C-Chain",
+        tag: "AVAX",
+        chainId: 43114,
+        currency: "AVAX",
+        rpcs: configService.get<string>('AVAX_RPC').split(','),
+    },
 ];

@@ -34,11 +34,11 @@ Before running the application, make sure you have the following installed on yo
    ERA_RPC=<RPC Server Address>
    OP_RPC=<RPC Server Address>
    MATIC_RPC=<RPC Server Address>
+   AVAX_RPC=<RPC Server Address>
 
    ERA_MULTICALL="0x47898B2C52C957663aE9AB46922dCec150a2272c"
    ```
    Replace the `<username>`, `<password>`, `<host>`, `<port>`, `<database>` and `<RPC Server Address>` placeholders with the appropriate values.
-6. Run `npm run migration:run` to run the database migrations.
 
 ### Running the Application
 
