@@ -1,7 +1,7 @@
 import { IFullBalances } from "./interface";
 import { EvmProvider } from "./provider";
 import { EvmProviderFactory } from "./provider.factory";
-import * as PromiseB from 'bluebird';
+import PromiseB from 'bluebird';
 import {TaskQueue} from 'cwait';
 
 export async function getProviders(): Promise<EvmProvider[]> {
