@@ -11,7 +11,7 @@ export async function getProviders(): Promise<EvmProvider[]> {
 }
 export async function getAllBalancesParallel(providers: EvmProvider[], address: string): Promise<IFullBalances> {
     const queue = new TaskQueue(PromiseB, 6);
-    const addressMap = Array.from(Array(providers.length), (e,i)=>address);
+    const addressMap = Array.from(Array(providers.length),(e,i)=>address);
     const balances = {}
     const results = await Promise.all(
         [...addressMap.map(queue.wrap((address,index)=> providers[index].getTokensBalancesByAddress(address)))]
