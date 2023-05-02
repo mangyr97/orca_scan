@@ -22,11 +22,11 @@ Before running the application, make sure you have the following installed on yo
 4. Create and start a PostgreSQL database for the project.
 5. Create a `.env` file in the root of the project and add the following environment variables:
    ```
-   DB_HOST=<host>
-   DB_PORT=<port>
-   DB_USERNAME=<username>
-   DB_DATABASE=<database>
-   DB_PASSWORD=<password>
+   POSTGRES_HOST=<host>
+   POSTGRES_PORT=<port>
+   POSTGRES_USER=<username>
+   POSTGRES_DB=<database>
+   POSTGRES_PASSWORD=<password>
 
    ETH_RPC=<RPC Server Address>
    BSC_RPC=<RPC Server Address>
