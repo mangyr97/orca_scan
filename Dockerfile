@@ -25,6 +25,5 @@ RUN rm -rf /app/package-lock.json
 #RUN rm -rf /app/tsconfig.build.json
 #RUN rm -rf /app/src
 ENV NODE_OPTIONS="--max-old-space-size=4096"
-EXPOSE 3000
 
 CMD npm run start:prod
