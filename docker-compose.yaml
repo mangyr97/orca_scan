@@ -10,6 +10,7 @@ services:
   orcascan:
     build: .
     image: orcascan-latest
+    restart: always
     env_file:
         - .env
     depends_on:
